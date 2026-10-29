@@ -23,8 +23,8 @@ def show_menu():
         exit()
     else:
         console.print("invalid input.please enter'yes' or'no'.",style="red on white")
-
 def play_quiz():
+
     score=0
     user_correct=0
     BONUS=10
