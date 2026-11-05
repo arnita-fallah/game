@@ -1,4 +1,8 @@
-
+# print("what's the best CMS?") #namayesh soal karbar
+# print("A:wordpress")# namayesh gozineha
+# print("B:Joomla")# daryaft javab az karbar
+# print("C:Drupal")#namayesh dorost o ghalat boodan
+# print("B:Headless")
 from rich.console import Console
 import random
 
