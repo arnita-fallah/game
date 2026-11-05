@@ -47,9 +47,9 @@ def play_quiz(player_name):
                     break
                 else:
                     print("please enter yes or no.")
-    questions,option,correct_answer =player_questions[i]
-    print(questions)
-    for option in option:
+    question,options,correct_answer =player_questions[i]
+    print(question)
+    for option in options:
         print(option)
         user_answer=str(input("Your choice:").strip().upper())
         if user_answer==correct_answer:
