@@ -4,87 +4,165 @@
 # print("C:Drupal")#namayesh dorost o ghalat boodan
 # print("B:Headless")
 from rich.console import Console
-import random
+from rich.panel import Panel
+from rich.table import Table
+from time import perf_counter
+
+from engine_class import Question, Mach
 
 console = Console()
-
 questions = [
-    ("what's the best CMS?", ["A: WordPress", "B: Joomla", "C: Drupal", "D: Headless"], "A"),
-    ("what's the best programming language?", ["A: Python", "B: JavaScript", "C: Java", "D: C++"], "A"),
-    ("what's the best database?", ["A: MySQL", "B: PostgreSQL", "C: MongoDB", "D: SQL"], "B"),
+    Question(
+        "What's the best CMS?",
+        ["A: WordPress", "B: Joomla", "C: Drupal", "D: Headless"],
+        "A"
+    ),
+
+    Question(
+        "What's the best programming language?",
+        ["A: Python", "B: JavaScript", "C: Java", "D: C++"],
+        "A"
+    ),
+
+    Question(
+        "What's the best database?",
+        ["A: MySQL", "B: PostgreSQL", "C: MongoDB", "D: SQL"],
+        "B"
+    ),
 ]
 
 
 def show_menu():
+
     while True:
-        user_input = input("Do you want to start the quiz? ").strip().lower()
+
+        user_input = input(
+            "Do you want to start the quiz?(yes/no) "
+        ).strip().lower()
 
         if user_input == "yes":
             return True
+
         elif user_input == "no":
-            console.print("Exiting the quiz. Goodbye!", style="yellow on black")
+
+            console.print(
+                "Exiting the quiz. Goodbye!",
+                style="yellow on black"
+            )
+
             return False
+
         else:
-            console.print("Invalid input. Please enter yes or no.", style="red on white")
 
+            console.print(
+                "Invalid input. Please enter yes or no.",
+                style="red on white"
+            )
 
-def play_quiz(player_name):
-    score = 0
-    user_correct = 0
-    BONUS = 10
-    PENALTY = 3
-    used_change = False
-    player_questions = questions.copy()
+def play_quiz(match):
 
-    for i in range(len(player_questions)):
-        if not used_change and i < len(player_questions) - 1:
-            while True:
-                change = input("Do you want to change this question? (yes/no): ").strip().lower()
+    while not match.is_over():
 
-                if change == "yes":
-                    new_index = random.choice(range(i + 1, len(player_questions)))
-                    player_questions[i], player_questions[new_index] = player_questions[new_index], player_questions[i]
-                    used_change = True
-                    print("Question changed!")
-                    break
-                elif change == "no":
-                    break
-                else:
-                    print("Please enter yes or no.")
+        question = match.start_round()
 
-        question, options, correct_answer = player_questions[i]
+        console.print(
+            Panel(
+                f"[bold cyan]Round {match.rounds}[/bold cyan]\n\n"
+                f"{question.text}",
+                title="QUIZ GAME"
+            )
+        )
 
-        print(question)
+        for option in question.options:
+            console.print(option)
+        for player in match.players:
 
-        for option in options:
-            print(option)
+            console.print(
+                f"\n[bold yellow]{player}'s turn[/bold yellow]"
+            )
 
-        user_answer = input("Your choice: ").strip().upper()
+            start_time = perf_counter()
 
-        if user_answer == correct_answer:
-            print("Correct")
-            score += BONUS
-            user_correct += 1
-        else:
-            print("Incorrect")
-            score -= PENALTY
+            user_answer = input("Your choice: ").strip().upper()
 
-    return score, user_correct
+            elapsed = perf_counter() - start_time
 
+            match.submit(player, user_answer, elapsed)
+        results = match.results_round()
+        
+        for player in match.players:
 
-def show_results(score, user_correct):
-    print(f"Your final score is: {score}")
-    print(f"You answered {user_correct} questions correctly.")
-    print(f"Percentage: {user_correct / len(questions) * 100:.2f}%")
+            result = results[player]
 
+            console.print(
+                f"{player}: {result.status} | "
+                f"Score: +{result.score}"
+            )
+        console.print("\n[bold cyan]Current Scores[/bold cyan]")
 
+        for player in match.players:
+
+            console.print(
+                f"{player}: {match.score_of(player)}"
+            )
+def show_results(match):
+
+    table = Table(title="FINAL RESULTS")
+
+    table.add_column("Player", style="cyan")
+    table.add_column("Score", justify="center")
+
+    for player in match.players:
+
+        table.add_row(
+            player,
+            str(match.score_of(player))
+        )
+
+    console.print(table)
+
+    winner = match.winner()
+
+    if winner is None:
+
+        console.print(
+            Panel(
+                "[bold yellow]It's a Draw![/bold yellow]"
+            )
+        )
+
+    else:
+
+        console.print(
+            Panel(
+                f"[bold green]Winner: {winner}[/bold green]"
+            )
+        )
 while True:
-    if show_menu():
-        number_of_players = int(input("Enter number of players:"))
 
-        for i in range(number_of_players):
-            player_name = input("Enter player name:")
-            score, user_correct = play_quiz(player_name)
-            show_results(score, user_correct)
+    if show_menu():
+
+        try:
+
+            player1 = input("Enter Player 1 name: ").strip()
+            player2 = input("Enter Player 2 name: ").strip()
+
+            match = Mach(
+                player1,
+                player2,
+                questions
+            )
+
+            play_quiz(match)
+
+            show_results(match)
+
+        except ValueError as error:
+
+            console.print(
+                f"Error: {error}",
+                style="red"
+            )
+
     else:
         break
