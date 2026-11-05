@@ -3,7 +3,7 @@ from rich.panel import Panel
 from rich.table import Table
 from time import perf_counter
 
-from engine_class import Question, Mach
+from engine import Question, Mach
 
 console = Console()
 questions = [
