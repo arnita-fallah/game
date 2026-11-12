@@ -21,15 +21,15 @@ ROUNDS = 3
 TIME_LIMIT = 30
 BONUS = 3
 SCORE = 10
-class Mach:
-    def __init__(self, player1, player2, qestions):
-        if player1 == player2:
+class Match:
+    def __init__(self, players, questions):
+        if len(set(players)) < len(players):
             raise ValueError("Player names must be different.")
-        if len(qestions) < ROUNDS:
+        if len(questions) < ROUNDS:
             raise ValueError(f"At least {ROUNDS} questions are required.")
-        self._players = [player1, player2]
-        self._questions = list(qestions)
-        self._score = {player1: 0, player2: 0}
+        self._players = list(players)
+        self._questions = list(questions)
+        self._score = {player: 0 for player in self._players}
         self._round = 0
         self._answers = {}
     
