@@ -80,6 +80,3 @@ Game settings such as the number of rounds, the time limit per answer, and the s
 - Add difficulty levels and categories
 - Save a high-score table
 
-## License
-
-Add a license of your choice (for example MIT).
