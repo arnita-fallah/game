@@ -3,7 +3,7 @@ from game.engine import ROUNDS, Question
 import random
 from pathlib import Path
 QUESTION_PATH="question.json"
-leaderboard_path="LEADERBOARD.json"
+LEADERBOARD_PATH="leaderboard.json"
 
 class QuestionBank:
     def __init__(self,path=QUESTION_PATH):
@@ -26,7 +26,7 @@ class QuestionBank:
             raise ValueError(f"Not enough questions in the bank. Required: {n}, available: {self.count()}.")
         return random.sample(self._questions,n)
 class Leaderboard:
-    def __init__(self,path=leaderboard_path):
+    def __init__(self,path=LEADERBOARD_PATH):
         self._path=Path(path)
         self._data={}
         if self._path.exists():
