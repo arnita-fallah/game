@@ -98,3 +98,4 @@ class RoundResult:
         return self._score
     def add_bonus(self, bonus):
         self._score += bonus
+

@@ -3,33 +3,14 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from time import perf_counter
-
 from engine import Question, Match, ROUNDS, TIME_LIMIT, BONUS, SCORE
+from game.storage import QuestionBank
+
 
 console = Console()
-questions = [
-    Question(
-        "What's the best CMS?",
-        ["WordPress", "Joomla", "Drupal", "Headless"],
-        "A"
-    ),
-
-    Question(
-        "What's the best programming language?",
-        ["Python", "JavaScript", "Java", "C++"],
-        "A"
-    ),
-
-    Question(
-        "What's the best database?",
-        ["MySQL", "PostgreSQL", "MongoDB", "SQL"],
-        "B"
-    ),
-]
-
+questions = QuestionBank()
 
 def show_menu():
-
     while True:
 
         user_input = input(
@@ -221,7 +202,7 @@ def show_final_results(match):
 console.print("[bold cyan]Welcome to the Quiz Game![/bold cyan]\n")
 name1 = input("Enter name for Player 1: ").strip()
 name2 = input("Enter name for Player 2: ").strip()
-match = Match([name1, name2], questions)
+match = Match([name1, name2], questions.pick(5))
 while not match.is_over():
     question = match.start_round()
     for index, player in enumerate(match.players):
