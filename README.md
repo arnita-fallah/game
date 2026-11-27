@@ -32,7 +32,7 @@ game/
 Run these commands on Linux or macOS.
 
 ```bash
-git clone https://github.com/mahdi-hajizadh/Game.git game
+git clone https://github.com/arnita-fallah/game.git game
 cd game
 python3 -m venv .venv
 source .venv/bin/activate
@@ -91,7 +91,7 @@ rounds, increase the sample size in `main.py` and add enough questions to the ba
 ## Tests and Releases
 
 Run the tests locally with `python -m unittest discover -s tests -v`. GitHub
-Actions tests pushes and pull requests to `master` on Python 3.9 and 3.14.
+Actions tests pushes and pull requests to `main` on Python 3.9 and 3.14.
 After a successful push or manual run, download `quiz-game` from the workflow's
 **Artifacts** section. It contains the playable ZIP and excludes local scores.
 
@@ -101,6 +101,6 @@ ZIP in GitHub Releases. Run these commands from the tested commit to publish
 
 ```bash
 git tag v1.1.0
-git push https://github.com/mahdi-hajizadh/Game.git refs/tags/v1.1.0
+git push https://github.com/arnita-fallah/game.git refs/tags/v1.1.0
 ```
 
