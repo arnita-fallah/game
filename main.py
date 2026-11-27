@@ -13,78 +13,102 @@ questions = QuestionBank()
 def show_menu():
     while True:
 
-def ask(player, question, round_number):
-    console.clear()
-    console.print(
-        Panel(
-            f"[bold cyan]Round {round_number}[/bold cyan]\n\n"
-            f"{question.text}",
-            title="QUIZ GAME"
-        )
-    )
+        user_input = input(
+            "Do you want to start the quiz?(yes/no) "
+        ).strip().lower()
 
-    for option in question.options:
-        console.print(option)
+        if user_input == "yes":
+            return True
 
-    start_time = perf_counter()
-    user_answer = input(f"\n{player}, your choice: ").strip().upper()
-    elapsed = perf_counter() - start_time
+        elif user_input == "no":
 
-    return user_answer, elapsed
+            console.print(
+                "Exiting the quiz. Goodbye!",
+                style="yellow on black"
+            )
 
+            return False
 
-def show_round_results(match, results, question):
-    console.clear()
-    console.print(
-        Panel(
-            f"[bold cyan]Round {match.rounds} Results[/bold cyan]\n\n"
-            f"{question.text}",
-            title="QUIZ GAME"
-        )
-    )
-
-    for player in match.players:
-        result = results[player]
-        choice, elapsed = match.answer_of(player)
-
-        if result.status == "correct":
-            color = "green"
-        elif result.status == "too_late":
-            color = "yellow"
         else:
-            color = "red"
+
+            console.print(
+                "Invalid input. Please enter yes or no.",
+                style="red on white"
+            )
+
+def play_quiz(match):
+
+    while not match.is_over():
+
+        question = match.start_round()
 
         console.print(
-            f"{player}: [bold {color}]{result.status}[/bold {color}] | "
-            f"Score: +{result.score} | "
-            f"Time: {elapsed:.2f}s"
+            Panel(
+                f"[bold cyan]Round {match.rounds}[/bold cyan]\n\n"
+                f"{question.text}",
+                title="QUIZ GAME"
+            )
         )
 
-    console.print()
+        for option in question.options:
+            console.print(option)
+        for player in match.players:
+
+            console.print(
+                f"\n[bold yellow]{player}'s turn[/bold yellow]"
+            )
+
+            start_time = perf_counter()
+
+            user_answer = input("Your choice: ").strip().upper()
+
+            elapsed = perf_counter() - start_time
+
+            match.submit(player, user_answer, elapsed)
+        results = match.results_round()
+        
+        for player in match.players:
+
+            result = results[player]
+
+            console.print(
+                f"{player}: {result.status} | "
+                f"Score: +{result.score}"
+            )
+        console.print("\n[bold cyan]Current Scores[/bold cyan]")
+
+        for player in match.players:
+
+            console.print(
+                f"{player}: {match.score_of(player)}"
+            )
+def show_results(match):
+
+    table = Table(title="FINAL RESULTS")
+
+    table.add_column("Player", style="cyan")
+    table.add_column("Score", justify="center")
+
     for player in match.players:
-        console.print(f"{player}: Total Score: {match.score_of(player)}")
 
-    input("\nPress Enter to continue to the next round...")
-
-
-def show_final_results(match):
-    console.clear()
-    console.print(
-        Panel(
-            "[bold cyan]Final Results[/bold cyan]",
-            title="QUIZ GAME"
+        table.add_row(
+            player,
+            str(match.score_of(player))
         )
-    )
 
-    for player in match.players:
-        console.print(f"{player}: Total Score: {match.score_of(player)}")
+    console.print(table)
 
     winner = match.winner()
 
     if winner is None:
-        console.print(Panel("[bold yellow]It's a Draw![/bold yellow]"))
+
+        console.print(
+            Panel(
+                "[bold yellow]It's a Draw![/bold yellow]"
+            )
+        )
+
     else:
-        console.print(Panel(f"[bold green]Winner: {winner}[/bold green]"))
 
         console.print(
             Panel(
