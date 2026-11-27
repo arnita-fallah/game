@@ -2,9 +2,10 @@ from re import match
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 from time import perf_counter
 from engine import Question, Match, ROUNDS, TIME_LIMIT, BONUS, SCORE
-from game.storage import QuestionBank
+from storage import Leaderboard, QuestionBank
 
 
 console = Console()
@@ -212,3 +213,19 @@ while not match.is_over():
     results = match.results_round()
     show_round_results(match, results, question)
 show_final_results(match)
+
+leaderboard = Leaderboard()
+leaderboard.record(
+    match.winner(), name1, name2, match.score_of(name1), match.score_of(name2)
+)
+
+table = Table(title="LEADERBOARD")
+table.add_column("Player", style="cyan")
+table.add_column("Total Score", justify="right")
+table.add_column("Wins", justify="right")
+table.add_column("Draws", justify="right")
+for player, totals in leaderboard.top():
+    table.add_row(
+        Text(player), str(totals["score"]), str(totals["wins"]), str(totals["draws"])
+    )
+console.print(table)
