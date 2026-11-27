@@ -1,0 +1,27 @@
+[
+        {
+            "text": "What's the best CMS?",
+            "options": ["WordPress", "Joomla", "Drupal", "Wix"],
+            "correct": "a"
+        },
+        {
+            "text": "What's the best programming language?",
+            "options": ["Python", "JavaScript", "Java", "C++"],
+            "correct": "a"
+        },
+        {
+            "text": "What's the best database?",
+            "options": ["PostgreSQL", "MySQL", "MongoDB", "SQLite"],
+            "correct": "a"
+        },
+        {
+            "text": "What's the best front-end framework?",
+            "options": ["React", "Vue", "Angular", "Svelte"],
+            "correct": "a"
+        },
+        {
+            "text": "What's the best back-end framework?",
+            "options": ["Django", "Express", "Ruby on Rails", "Laravel"],
+            "correct": "a"
+        }
+]
