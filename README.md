@@ -17,7 +17,8 @@ game/
 ├── engine.py         # Questions, match rules, and scoring
 ├── storage.py        # Question loading and leaderboard storage
 ├── question.json     # Question bank
-├── leaderboard.json  # Saved scores, wins, and draws
+├── leaderboard.json  # Generated after the first match
+├── requirements.txt  # Python dependency
 └── README.md
 ```
 
@@ -31,11 +32,11 @@ game/
 Run these commands on Linux or macOS.
 
 ```bash
-git clone --branch mahdi https://github.com/arnita-fallah/game.git
+git clone --branch mahdi https://github.com/mahdi-hajizadh/Game.git game
 cd game
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install rich
+python -m pip install -r requirements.txt
 python main.py
 ```
 
@@ -86,4 +87,20 @@ bank and uses three in a standard match.
 The round count (`ROUNDS`), time limit in seconds (`TIME_LIMIT`), and points
 (`SCORE` and `BONUS`) are defined in `engine.py`. For a match with more than five
 rounds, increase the sample size in `main.py` and add enough questions to the bank.
+
+## Tests and Releases
+
+Run the tests locally with `python -m unittest discover -s tests -v`. GitHub
+Actions tests pushes and pull requests to `mahdi` on Python 3.9 and 3.14.
+After a successful push or manual run, download `quiz-game` from the workflow's
+**Artifacts** section. It contains the playable ZIP and excludes local scores.
+
+Pushing a new version tag matching `v*` runs the same tests and publishes the
+ZIP in GitHub Releases. Run these commands from the tested commit to publish
+`v1.1.0`.
+
+```bash
+git tag v1.1.0
+git push https://github.com/mahdi-hajizadh/Game.git refs/tags/v1.1.0
+```
 

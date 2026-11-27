@@ -1,0 +1,78 @@
+name: Quiz CI/CD
+
+on:
+  push:
+    branches: [mahdi]
+    tags: ['v*']
+  pull_request:
+    branches: [mahdi]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.14']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+  package:
+    name: Build the game ZIP
+    needs: test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Package the game files
+        run: |
+          git archive --format=zip --prefix=quiz-game/ --output=quiz-game.zip \
+            HEAD README.md main.py engine.py storage.py question.json requirements.txt
+          unzip -t quiz-game.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: quiz-game
+          path: quiz-game.zip
+          if-no-files-found: error
+
+  release:
+    name: Publish a GitHub Release
+    needs: package
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: quiz-game
+      - name: Publish the ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null; then
+            gh release upload "$GITHUB_REF_NAME" quiz-game.zip
+          else
+            gh release create "$GITHUB_REF_NAME" quiz-game.zip --verify-tag --generate-notes
+          fi
