@@ -2,10 +2,10 @@ name: Quiz CI/CD
 
 on:
   push:
-    branches: [mahdi]
+    branches: [master]
     tags: ['v*']
   pull_request:
-    branches: [mahdi]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
